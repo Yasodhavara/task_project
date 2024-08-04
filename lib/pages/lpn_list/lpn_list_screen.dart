@@ -471,7 +471,6 @@ class _LpnListScreenState extends State<LpnListScreen> {
                                 ))
                           ],
                         ),
-                        Text("${MediaQuery.of(context).size.height} ff ${MediaQuery.of(context).size.width}}"),
                         SingleChildScrollView(
                           scrollDirection: MediaQuery.of(context).size.width < 1360 ? Axis.horizontal : Axis.vertical,
                           child: Container(
