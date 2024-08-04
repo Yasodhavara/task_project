@@ -25,12 +25,18 @@ class _LpnListScreenState extends State<LpnListScreen> {
     DropdownMenuEntry(value: '3', label: 'A2T9002<->A2T9003'),
     DropdownMenuEntry(value: '4', label: 'A2T9003<->A2T9004'),
   ];
+  late double padding = 0;
 
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _lpnListViewModel.dispose();
+    super.dispose();
+  }
+
+  void init() {
+    super.initState();
+    padding = MediaQuery.of(context).size.height * 0.016;
   }
 
   void displayAlert(BuildContext context) {
@@ -54,27 +60,30 @@ class _LpnListScreenState extends State<LpnListScreen> {
                   } else if (snapshot.hasError) {
                     return Text("error ${snapshot.error}");
                   } else {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        tableHeader(),
-                        Container(
-                          height: 1,
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
-                        kIsWeb ? dropDownSection() : SizedBox(),
-                        kIsWeb
-                            ? numOfRowsSelectionSection()
-                            : mobileDropDownSection(),
-                        binListTable(),
-                        paginationSection(),
-                        Container(
-                          height: 1,
-                          color: Colors.grey.withOpacity(0.2),
-                          margin: EdgeInsets.symmetric(vertical: 24),
-                        ),
-                        tableFooter(),
-                      ],
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          tableHeader(),
+                          Container(
+                            height: 1,
+                            color: Colors.grey.withOpacity(0.2),
+                          ),
+                          kIsWeb ? dropDownSection() : SizedBox(),
+                          kIsWeb
+                              ? numOfRowsSelectionSection()
+                              : mobileDropDownSection(),
+                          binListTable(),
+                          paginationSection(),
+                          Container(
+                            height: 1,
+                            color: Colors.grey.withOpacity(0.2),
+                            margin: EdgeInsets.symmetric(vertical: 24),
+                          ),
+                          tableFooter(),
+                        ],
+                      ),
                     );
                   }
                 }),
@@ -90,7 +99,8 @@ class _LpnListScreenState extends State<LpnListScreen> {
             decoration: const BoxDecoration(
               border: Border(left: BorderSide(color: Colors.teal, width: 3)),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.height * 0.016),
             child: const Text(
               "Bin List",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -203,7 +213,7 @@ class _LpnListScreenState extends State<LpnListScreen> {
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               ),
-              Container(
+              SizedBox(
                   width: MediaQuery.of(context).size.width * 0.30,
                   height: 35,
                   child: TextFormField(
@@ -246,14 +256,13 @@ class _LpnListScreenState extends State<LpnListScreen> {
 
   Widget binListTable() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
           border: Border.all(width: 1, color: Colors.grey.withOpacity(0.2)),
           borderRadius: BorderRadius.circular(10)),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-            headingRowHeight: 40,
             headingRowColor: WidgetStateProperty.resolveWith((ctx) {
               return Colors.teal[100]?.withOpacity(0.1);
             }),
@@ -381,7 +390,10 @@ class _LpnListScreenState extends State<LpnListScreen> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
-          margin: const EdgeInsets.only(left: 16, bottom: 24, right: 16),
+          margin: EdgeInsets.only(
+              left: MediaQuery.of(context).size.width * 0.016,
+              bottom: MediaQuery.of(context).size.height * 0.024,
+              right: MediaQuery.of(context).size.width * 0.016),
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
@@ -424,8 +436,9 @@ class _LpnListScreenState extends State<LpnListScreen> {
                 } else {
                   return Container(
                     margin: kIsWeb
-                        ? const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 100)
+                        ? EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.height * 0.05,
+                            vertical: MediaQuery.of(context).size.height * 0.03)
                         : const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 50),
                     child: Column(
@@ -458,144 +471,141 @@ class _LpnListScreenState extends State<LpnListScreen> {
                                 ))
                           ],
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1,
-                                  color: Colors.grey[200] ?? Colors.red),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: SingleChildScrollView(
-                            scrollDirection:
-                                kIsWeb ? Axis.vertical : Axis.horizontal,
-                            child: DataTable(
-                              dataRowMaxHeight: 80,
-                              headingRowHeight: 40,
-                              headingRowColor:
-                                  WidgetStateProperty.resolveWith((ctx) {
-                                return Colors.teal[100]?.withOpacity(0.1);
-                              }),
-                              dividerThickness: 0,
-                              columns: const [
-                                DataColumn(
-                                  label: Row(
-                                    children: [
-                                      Text(
-                                        "LPN Number",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Icon(Icons.filter_alt_outlined),
-                                    ],
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    "LPN Type",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    "Storage Area",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    "Quantity",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Row(
-                                    children: [
-                                      Text(
-                                        "SKU Description",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Icon(Icons.filter_alt_outlined),
-                                    ],
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    "Destination",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    "Actions",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              ],
-                              rows: List.generate(
-                                  _lpnListViewModel.lpnListdata!.length,
-                                  (index) {
-                                final item =
-                                    _lpnListViewModel.lpnListdata![index];
-                                return DataRow(
-                                  color: WidgetStateProperty.resolveWith((ctx) {
-                                    if (index % 2 == 1) {
-                                      return Colors.teal[100]?.withOpacity(0.1);
-                                    } else {
-                                      return Colors.transparent;
-                                    }
-                                  }),
-                                  cells: [
-                                    DataCell(Text(item.lpnNumber ?? "")),
-                                    DataCell(Text(item.lpnType ?? "")),
-                                    DataCell(SizedBox(
-                                        width: 180,
-                                        child:
-                                            Text(item.storageLocation ?? ""))),
-                                    DataCell(Text(item.quantity ?? "")),
-                                    DataCell(SizedBox(
-                                        width: 150,
-                                        child: Text(
-                                            '${item.skuCode} - ${item.skuDescription}'))),
-                                    DataCell(SizedBox(
-                                      height: 35,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          contentPadding:
-                                              EdgeInsets.only(left: 16),
-                                          border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.2))),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.2))),
+                        Text("${MediaQuery.of(context).size.height} ff ${MediaQuery.of(context).size.width}}"),
+                        SingleChildScrollView(
+                          scrollDirection: MediaQuery.of(context).size.width < 1360 ? Axis.horizontal : Axis.vertical,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 1,
+                                    color: Colors.grey[200] ?? Colors.red),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: SingleChildScrollView(
+                              scrollDirection:
+                                  kIsWeb ? Axis.vertical : Axis.horizontal,
+                              child: DataTable(
+                                headingRowColor:
+                                    WidgetStateProperty.resolveWith((ctx) {
+                                  return Colors.teal[100]?.withOpacity(0.1);
+                                }),
+                                dividerThickness: 0,
+                                columns: const [
+                                  DataColumn(
+                                    label: Row(
+                                      children: [
+                                        Text(
+                                          "LPN Number",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      ),
-                                    )),
-                                    DataCell(IconButton(
-                                      onPressed: () {
-                                        displayAlert(context);
-                                      },
-                                      icon: const Icon(
-                                        Icons.manage_search_rounded,
-                                        color: Colors.teal,
-                                      ),
-                                    )),
-                                  ],
-                                );
-                              }),
+                                        Icon(Icons.filter_alt_outlined),
+                                      ],
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      "LPN Type",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      "Storage Area",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      "Quantity",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Row(
+                                      children: [
+                                        Text(
+                                          "SKU Description",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Icon(Icons.filter_alt_outlined),
+                                      ],
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      "Destination",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      "Actions",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                ],
+                                rows: List.generate(
+                                    _lpnListViewModel.lpnListdata!.length,
+                                    (index) {
+                                  final item =
+                                      _lpnListViewModel.lpnListdata![index];
+                                  return DataRow(
+                                    color: WidgetStateProperty.resolveWith((ctx) {
+                                      if (index % 2 == 1) {
+                                        return Colors.teal[100]?.withOpacity(0.1);
+                                      } else {
+                                        return Colors.transparent;
+                                      }
+                                    }),
+                                    cells: [
+                                      DataCell(Text(item.lpnNumber ?? "")),
+                                      DataCell(Text(item.lpnType ?? "")),
+                                      DataCell(Text(item.storageLocation ?? "")),
+                                      DataCell(Text(item.quantity ?? "")),
+                                      DataCell(Text(
+                                          '${item.skuCode} - ${item.skuDescription}')),
+                                      DataCell(SizedBox(
+                                        height: 35,
+                                        child: TextFormField(
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.only(left: 16),
+                                            border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.2))),
+                                            enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.2))),
+                                          ),
+                                        ),
+                                      )),
+                                      DataCell(IconButton(
+                                        onPressed: () {
+                                          displayAlert(context);
+                                        },
+                                        icon: const Icon(
+                                          Icons.manage_search_rounded,
+                                          color: Colors.teal,
+                                        ),
+                                      )),
+                                    ],
+                                  );
+                                }),
+                              ),
                             ),
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
+                          margin: const EdgeInsets.symmetric(vertical: 10),
                           height: 1,
                           color: Colors.grey.withOpacity(0.2),
                         ),
@@ -603,7 +613,7 @@ class _LpnListScreenState extends State<LpnListScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              margin: const EdgeInsets.symmetric(horizontal: 10),
                               child: ElevatedButton(
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
